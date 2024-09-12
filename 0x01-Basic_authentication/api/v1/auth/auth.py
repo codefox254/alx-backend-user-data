@@ -5,6 +5,7 @@ from typing import List, TypeVar
 from flask import request
 import fnmatch
 
+
 class Auth:
     """
     Auth class for managing API authentication and access control.
@@ -19,7 +20,8 @@ class Auth:
 
         Args:
             path (str): The path to check.
-            excluded_paths (List[str]): A list of paths that are excluded from authentication.
+            excluded_paths (List[str]): A list of paths that are excluded from
+                                        authentication.
 
         Returns:
             bool: True if the path requires authentication, False otherwise.
@@ -44,11 +46,13 @@ class Auth:
         # Check against each excluded path
         for excluded_path in excluded_paths:
             # Add wildcard support with '*' at the end of excluded paths
-            if fnmatch.fnmatch(path, excluded_path) or (excluded_path.endswith('*') and path.startswith(excluded_path[:-1])):
+            if fnmatch.fnmatch(path, excluded_path) or \
+               (excluded_path.endswith('*') and path.startswith(excluded_path[:-1])):
                 return False
 
         return True
 
+    
     def authorization_header(self, request=None) -> str:
         """
         Returns the value of the Authorization header from the request.
@@ -63,6 +67,7 @@ class Auth:
             return None
         return request.headers.get('Authorization')
 
+    
     def current_user(self, request=None) -> TypeVar('User'):
         """
         Returns the current user associated with the request.
