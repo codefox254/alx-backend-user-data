@@ -1,20 +1,34 @@
-import base64
-from typing import TypeVar
-from api.v1.auth.auth import Auth
-from models.user import User  # Assuming User class is defined in models.user
+#!/usr/bin/env python3
+"""
+BasicAuth module for managing API basic authentication.
+"""
 
-UserType = TypeVar('User')  # Type alias for User
+from api.v1.auth.auth import Auth
+from models.user import User
+from typing import TypeVar
+
 
 class BasicAuth(Auth):
-    """ BasicAuth class that inherits from Auth. """
+    """
+    BasicAuth class for implementing basic authentication mechanisms.
+
+    This class inherits from Auth and provides methods to handle basic
+    authentication, such as decoding credentials and retrieving user objects.
+    """
 
     def extract_base64_authorization_header(self, authorization_header: str) -> str:
-        """ Extract Base64 part from Authorization header. """
-        if not authorization_header or not isinstance(authorization_header, str):
+        """
+        Extracts the Base64 part of the Authorization header.
+
+        Args:
+            authorization_header (str): The Authorization header.
+
+        Returns:
+            str: The Base64 encoded part of the Authorization header or None.
+        """
+        if authorization_header is None or not authorization_header.startswith('Basic '):
             return None
-        if not authorization_header.startswith("Basic "):
-            return None
-        return authorization_header.split(" ", 1)[1]
+        return authorization_header.split(' ')[1]
 
     def decode_base64_authorization_header(self, base64_authorization_header: str) -> str:
         """ Decode Base64 string to UTF-8. """
