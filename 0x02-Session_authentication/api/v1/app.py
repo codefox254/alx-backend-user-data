@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Route module for the API
+Routes module for the APIs
 """
 
 from os import getenv
@@ -63,19 +63,19 @@ def before_request_handler():
         '/api/v1/auth_session/login/'  # Exclude login path from auth
     ]
 
-    # Check if the request requires authentication
+    # Checks if the request requires authentication
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    # Check if the Authorization header or session cookie is present
+    # Checks if the Authorization header or session cookie is present
     if (auth.authorization_header(request) is None and
             auth.session_cookie(request) is None):
         abort(401)
 
-    # Assign the authenticated user to request.current_user
+    # Assigns the authenticated user to request.current_user
     request.current_user = auth.current_user(request)
 
-    # Check if the current user is present
+    # Checks if the current user is present
     if request.current_user is None:
         abort(403)
 
