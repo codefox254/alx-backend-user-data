@@ -3,7 +3,6 @@
 Route module for the API
 """
 
-
 from os import getenv
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
@@ -33,19 +32,19 @@ elif auth_type == "auth":
 
 @app.errorhandler(404)
 def not_found(error) -> str:
-    """ Not found handler """
+    """Not found handler."""
     return jsonify({"error": "Not found"}), 404
 
 
 @app.errorhandler(401)
 def unauthorized(error) -> str:
-    """ Unauthorized handler """
+    """Unauthorized handler."""
     return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.errorhandler(403)
 def forbidden(error) -> str:
-    """ Forbidden handler """
+    """Forbidden handler."""
     return jsonify({"error": "Forbidden"}), 403
 
 
@@ -58,7 +57,10 @@ def before_request_handler():
 
     # Define paths that do not require authentication
     excluded_paths = [
-        '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/'
+        '/api/v1/status/',
+        '/api/v1/unauthorized/',
+        '/api/v1/forbidden/',
+        '/api/v1/auth_session/login/'  # Add the login path to excluded paths
     ]
 
     # Check if the request requires authentication
@@ -66,7 +68,8 @@ def before_request_handler():
         return
 
     # Check if the Authorization header is present
-    if auth.authorization_header(request) is None:
+    if (auth.authorization_header(request) is None and
+            auth.session_cookie(request) is None):
         abort(401)
 
     # Assign the authenticated user to request.current_user
