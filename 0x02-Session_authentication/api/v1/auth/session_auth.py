@@ -8,7 +8,7 @@ from api.v1.auth.auth import Auth
 
 class SessionAuth(Auth):
     """Session authentication class that inherits from Auth."""
-    
+
     # Class attribute to store session ID and corresponding user ID
     user_id_by_session_id = {}
 
