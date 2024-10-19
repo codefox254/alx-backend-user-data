@@ -3,17 +3,15 @@
 Session Authentication Routes
 """
 
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, Blueprint
 from models.user import User
 from api.v1.app import auth  # Import auth here to avoid circular import
 from os import getenv
-from flask import Blueprint
 
 session_auth_view = Blueprint('session_auth_view', __name__)
 
-
-@session_auth_view.route('/auth_session/login/', methods=['POST'], strict_slashes=False)
-@session_auth_view.route('/auth_session/login', methods=['POST'], strict_slashes=False)
+@session_auth_view.route('/api/v1/auth_session/login/', methods=['POST'], strict_slashes=False)
+@session_auth_view.route('/api/v1/auth_session/login', methods=['POST'], strict_slashes=False)
 def login():
     """Handles user login and session creation."""
     
