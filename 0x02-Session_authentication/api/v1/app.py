@@ -16,18 +16,23 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 # Initialize auth to None
 auth = None
 
-# Load and assign the correct instance of authentication to auth based on AUTH_TYPE
-auth_type = getenv("AUTH_TYPE", None)
+# Load the appropriate authentication class based on AUTH_TYPE
+auth_type = getenv("AUTH_TYPE")
 
-if auth_type == "basic_auth":
-    from api.v1.auth.basic_auth import BasicAuth  # Import BasicAuth
-    auth = BasicAuth()  # Create an instance of BasicAuth
-elif auth_type == "session_auth":
-    from api.v1.auth.session_auth import SessionAuth  # Import SessionAuth
-    auth = SessionAuth()  # Create an instance of SessionAuth
-elif auth_type == "auth":
-    from api.v1.auth.auth import Auth  # Import Auth
-    auth = Auth()  # Create an instance of Auth
+# Function to initialize authentication
+def initialize_auth():
+    global auth
+    if auth_type == "basic_auth":
+        from api.v1.auth.basic_auth import BasicAuth  # Import BasicAuth
+        auth = BasicAuth()
+    elif auth_type == "session_auth":
+        from api.v1.auth.session_auth import SessionAuth  # Import SessionAuth
+        auth = SessionAuth()
+    elif auth_type == "auth":
+        from api.v1.auth.auth import Auth  # Import Auth
+        auth = Auth()
+
+initialize_auth()  # Call the function to initialize auth
 
 @app.errorhandler(404)
 def not_found(error) -> str:
@@ -55,14 +60,14 @@ def before_request_handler():
         '/api/v1/status/',
         '/api/v1/unauthorized/',
         '/api/v1/forbidden/',
-        '/api/v1/auth_session/login/'  # Add the login path to excluded paths
+        '/api/v1/auth_session/login/'  # Exclude login path from auth
     ]
 
     # Check if the request requires authentication
     if not auth.require_auth(request.path, excluded_paths):
         return
 
-    # Check if the Authorization header is present
+    # Check if the Authorization header or session cookie is present
     if (auth.authorization_header(request) is None and
             auth.session_cookie(request) is None):
         abort(401)
